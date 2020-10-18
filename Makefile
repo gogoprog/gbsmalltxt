@@ -3,7 +3,6 @@ BUILD=./build
 
 SOURCES := $(shell find src -type f -name '*.c')
 
-
 build: $(SOURCES)
 	mkdir -p $(BUILD)
 	$(BIN)/gbdk-n-compile.sh $(SOURCES) -o $(BUILD)/output.rel
@@ -13,5 +12,7 @@ build: $(SOURCES)
 clean:
 	rm -rf $(BUILD)
 
-run:
+run: build
 	mgba build/output.gb
+
+.PHONY: build
