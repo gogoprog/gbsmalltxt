@@ -110,7 +110,7 @@ static const uint8 font[] = {
 };
 
 struct smalltxt_ctx {
-    uint8 tiles[250 * 16];
+    uint8 tiles[256 * 16];
     uint8 tilemap[1024];
     int width;
     int height;
@@ -158,48 +158,45 @@ void smalltxt_draw_text(struct smalltxt_ctx *ctx, const int x, const int y, cons
 }
 
 void smalltxt_init(struct smalltxt_ctx *ctx, const int width, const int height) {
-    ctx->width = width;
-    ctx->height = height;
+    ctx->width = width / 8;
+    ctx->height = height / 8;
 
-    memset(ctx->tiles, 0, 250 * 16);
+    memset(ctx->tiles, 0, 256 * 16);
+    memset(ctx->tilemap, 0, 1024);
 
-    /* smalltxt_set_pixel(ctx->tiles, 0, 0, 0b11); */
-    /* smalltxt_set_pixel(ctx->tiles, 1, 1, 0b11); */
-    /* smalltxt_set_pixel(ctx->tiles, 2, 2, 0b11); */
-    /* smalltxt_set_pixel(ctx->tiles, 20, 5, 0b11); */
-
-    smalltxt_draw_char(ctx, 1, 1, 'A');
-    smalltxt_draw_char(ctx, 1, 32, 'C');
-
-    smalltxt_draw_text(ctx, 1, 16, "HELLO WORLD");
-
-    memset(ctx->tilemap, 0, 128);
-
-    for (int i = 0; i < 250; i++) {
+    for (int i = 0; i < ctx->width * ctx->height; i++) {
         ctx->tilemap[i] = i;
     }
 }
 
-void smalltxt_render(struct smalltxt_ctx *ctx) {
-    set_win_data(0, 64, ctx->tiles);
-    set_win_tiles(0, 0, ctx->width, ctx->height, ctx->tilemap);
+void smalltxt_render(struct smalltxt_ctx *ctx, const int x, const int y) {
+    set_win_data(0, 256, ctx->tiles);
+    set_win_tiles(x, y, ctx->width, ctx->height, ctx->tilemap);
     SHOW_WIN;
 }
 
-void main(void) {
-    UINT8 background_tilemap[32 * 32];
-    UINT8 tileset[16];
-
+void dummy(void) {
+    uint8 background_tilemap[32 * 32];
+    uint8 tileset[16];
     memset(tileset, 0, 16);
     memset(background_tilemap, 0, 32 * 32);
-
     set_bkg_data(0, 1, tileset);
     set_bkg_tiles(0, 0, 32, 32, background_tilemap);
-
     SHOW_BKG;
+}
+
+void main(void) {
+    dummy();
 
     struct smalltxt_ctx ctx;
-    smalltxt_init(&ctx, 10, 10);
+    smalltxt_init(&ctx, 160, 100);
 
-    smalltxt_render(&ctx);
+    smalltxt_draw_text(&ctx, 1, 12, "gbsmalltxt");
+    smalltxt_draw_text(&ctx, 1, 20, "----------");
+    smalltxt_draw_text(&ctx, 1, 26, "Display text anywhere on the screen");
+    smalltxt_draw_text(&ctx, 1, 33, "using a 3x6 font!");
+
+    smalltxt_draw_text(&ctx, 10, 50, "Hello World!");
+
+    smalltxt_render(&ctx, 0, 0);
 }
