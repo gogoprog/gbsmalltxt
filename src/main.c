@@ -195,7 +195,6 @@ void main(void) {
     smalltxt_draw_text(&ctx, 1, 20, "----------");
     smalltxt_draw_text(&ctx, 1, 26, "Display text anywhere on the screen");
     smalltxt_draw_text(&ctx, 1, 33, "using a 3x6 font!");
-
     smalltxt_draw_text(&ctx, 10, 50, "Hello World!");
 
     smalltxt_render(&ctx, 0, 0);
